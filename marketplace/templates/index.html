@@ -1,0 +1,812 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriContract - Assured Contract Farming System</title>
+    <meta name="description" content="Connect farmers directly with buyers through secure contract farming. Guaranteed prices, reliable supply, and transparent transactions.">
+    <meta name="keywords" content="contract farming, agriculture, farmers, buyers, crops, secure payments">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌾</text></svg>">
+</head>
+<body  >
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">
+                <i class="fas fa-seedling"></i>
+                <span data-translate="brand">AgriContract</span>
+            </div>
+            <div class="loading-spinner"></div>
+            <p>Loading your farming future...</p>
+        </div>
+    </div>
+
+    <div class="language-selector">
+        <button class="language-btn" onclick="toggleLanguageMenu()">
+            <i class="fas fa-globe"></i>
+            <span id="current-language">English</span>
+            <i class="fas fa-chevron-down"></i>
+        </button>
+        <div id="language-menu" class="language-menu">
+            <div class="language-option" onclick="changeLanguage('en', 'English')">
+                <span class="flag">🇺🇸</span>
+                <span>English</span>
+            </div>
+            <div class="language-option" onclick="changeLanguage('hi', 'हिंदी')">
+                <span class="flag">🇮🇳</span>
+                <span>हिंदी</span>
+            </div>
+            <div class="language-option" onclick="changeLanguage('pa', 'ਪੰਜਾਬੀ')">
+                <span class="flag">🇮🇳</span>
+                <span>ਪੰਜਾਬੀ</span>
+            </div>
+            <div class="language-option" onclick="changeLanguage('bn', 'বাংলা')">
+                <span class="flag">🇮🇳</span>
+                <span>বাংলা</span>
+            </div>
+            <div class="language-option" onclick="changeLanguage('te', 'తెలుగు')">
+                <span class="flag">🇮🇳</span>
+                <span>తెలుగు</span>
+            </div>
+        </div>
+    </div>
+
+    <nav id="navbar" class="navbar">
+        <div class="nav-container">
+            <a href="{% url 'home' %}" class="nav-brand">
+                <i class="fas fa-seedling"></i>
+                <span data-translate="brand">AgriContract</span>
+            </a>
+
+            <div id="nav-menu" class="nav-menu">
+              
+                <a href="#" class="nav-link" onclick="showPage('home')" data-translate="nav.home">Home</a>
+                <a href="#features" class="nav-link" onclick="scrollToSection('features')" data-translate="nav.features">Features</a>
+                <a href="#how-it-works" class="nav-link" onclick="scrollToSection('how-it-works')" data-translate="nav.how_it_works">How It Works</a>
+<a href="{% url 'disease_detector' %}">Disease Detector</a>
+                <a href="#" class="nav-link" onclick="showMarketAnalytics()" data-translate="nav.market_analytics">Market Analytics</a>
+                <a href="#about" class="nav-link" onclick="scrollToSection('about')" data-translate="nav.about">About</a>
+                
+
+
+                {% if user.is_authenticated %}
+    <a href="{% url 'dashboard' %}" class="nav-link">
+        <i class="fas fa-tachometer-alt"></i> Dashboard
+    </a>
+    {% endif %}
+            </div>
+
+           <div id="nav-auth-logic">
+    {% if user.is_authenticated %}
+        <div class="nav-user-container" style="display: flex; align-items: center; gap: 15px;">
+            <div class="user-dropdown">
+                <button class="user-btn" onclick="toggleUserMenu()" style="display: flex; align-items: center; gap: 10px; background: none; border: none; cursor: pointer;">
+                    <div class="user-avatar-img" style="background: #15803d; color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                        <span>{{ user.username|slice:":1"|upper }}</span>
+                    </div>
+                    <span id="user-name" style="color: #15803d; font-weight: 600;">{{ user.username }}</span>
+                    <i class="fas fa-chevron-down" style="color: #666; font-size: 0.8rem;"></i>
+                </button>
+                
+                <div id="user-dropdown" class="dropdown-menu">
+                    <a href="{% url 'dashboard' %}">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#" onclick="showProfile()">
+                        <i class="fas fa-user"></i>
+                        <span>Profile</span>
+                    </a>
+                    <form action="{% url 'logout' %}" method="post" id="logout-form-nav" style="display: none;">
+                        {% csrf_token %}
+                    </form>
+                    <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form-nav').submit();">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="nav-auth-buttons" style="display: flex; gap: 10px;">
+            <button class="btn btn-outline" onclick="showLogin()" style="display: block !important;">Login</button>
+            <button class="btn btn-primary" onclick="showRegister()" style="display: block !important;">Get Started</button>
+        </div>
+    {% endif %}
+</div>
+
+            <button class="nav-toggle" onclick="toggleMobileMenu()">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <div id="home-page" class="page active" >
+        <section class="hero">
+            <div class="hero-background">
+                <div class="hero-particles"></div>
+            </div>
+            <div class="container" >
+                <div class="hero-content">
+                    <div class="hero-badge" data-aos="fade-up">
+                        <i class="fas fa-shield-alt"></i>
+                        <span data-translate="hero.trusted_by">Trusted by 10,000+ Farmers</span>
+                    </div>
+                    <h1 class="hero-title" data-aos="fade-up" data-aos-delay="200">
+                        <span data-translate="hero.title_1">Assured Contract Farming System</span>
+                        <span class="text-gradient" data-translate="hero.title_2">for Stable Market Access</span>
+                    </h1>
+                    <p class="hero-description" data-aos="fade-up" data-aos-delay="400" data-translate="hero.description">
+                        Connect farmers directly with buyers through secure contract farming. Guaranteed prices, reliable supply, and transparent transactions for everyone.
+                    </p>
+                    <div class="hero-stats" data-aos="fade-up" data-aos-delay="600">
+                        <div class="stat-item">
+                            <span class="stat-number" data-count="10000">0</span>
+                            <span class="stat-label" data-translate="hero.stats.farmers">Active Farmers</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" data-count="5000">0</span>
+                            <span class="stat-label" data-translate="hero.stats.buyers">Verified Buyers</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" data-count="25000">0</span>
+                            <span class="stat-label" data-translate="hero.stats.contracts">Contracts Completed</span>
+                        </div>
+                    </div>
+                    <div class="hero-buttons" data-aos="fade-up" data-aos-delay="800">
+                        <button class="btn btn-primary btn-lg hero-btn" onclick="showRegister('farmer')">
+                            <i class="fas fa-seedling"></i>
+                            <span data-translate="hero.join_farmer">Join as Farmer</span>
+                        </button>
+                        <button class="btn btn-outline-white btn-lg hero-btn" onclick="showRegister('buyer')">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span data-translate="hero.join_buyer">Join as Buyer</span>
+                        </button>
+
+                    </div>
+                </div>{% if user.is_authenticated and user.userprofile.role == "farmer" %}
+    <a href="{% url 'add_crop' %}" class="btn btn-primary">
+        + Add Crop
+    </a>
+{% endif %}
+                
+                </div>
+            </div>
+        </section>
+
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    @keyframes pulse-green { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+</style>
+
+<section style="display:flex; justify-content:center; align-items:center; padding: 40px 20px; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+
+    <div style="width:380px; padding:30px; border-radius:24px; background: white; box-shadow: 0 20px 40px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05); color: #1e293b; border: 1px solid #e2e8f0;">
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px;">
+            
+            <div style="display:flex; align-items:center; gap:12px;">
+                <div style="font-size:24px; background: #e0f2fe; padding: 8px; border-radius: 12px;">🌦️</div>
+                <h3 style="margin:0; font-size: 18px; font-weight: 700; color: #0f172a;">Local Weather</h3>
+            </div>
+
+            <div style="font-size:12px; font-weight: 600; color:#15803d; background: #dcfce7; padding: 4px 10px; border-radius: 20px; display: flex; align-items: center; gap: 5px;">
+                <span style="width: 6px; height: 6px; background: #15803d; border-radius: 50%; display: inline-block; animation: pulse-green 2s infinite;"></span> Live
+            </div>
+        </div>
+
+        <div id="weather-status" style="text-align:center; padding: 20px 0;">
+            <div style="border:4px solid #f1f5f9; border-top:4px solid #15803d; border-radius:50%; width:35px; height:35px; margin:auto; animation:spin 1s linear infinite;"></div>
+            <p style="margin-top:15px; color: #64748b; font-weight: 500;">Fetching weather data...</p>
+        </div>
+
+        <div id="weather-data" style="display:none; text-align:center;">
+            
+            <h1 id="temp-display" style="font-size:64px; font-weight: 800; margin:10px 0; color: #0f172a; letter-spacing: -2px;">--°C</h1>
+
+            <p style="margin:5px 0 25px 0; font-size:16px; color: #64748b; font-weight: 500;">
+                <i class="fas fa-map-marker-alt" style="color: #ef4444; margin-right: 5px;"></i>
+                <span id="city-display">--</span>
+            </p>
+
+            <div style="display:flex; justify-content:space-between; margin-top:20px; gap: 15px;">
+                
+                <div style="flex: 1; background: #f8fafc; padding: 15px; border-radius: 16px; border: 1px solid #e2e8f0;">
+                    <p style="margin:0; font-size: 22px;">💧</p>
+                    <small style="color: #64748b; font-weight: 600; display: block; margin-top: 5px;">Humidity</small>
+                    <p style="margin: 5px 0 0 0; font-weight: 800; font-size: 18px; color: #0f172a;"><span id="humidity-display">--</span>%</p>
+                </div>
+
+                <div style="flex: 1; background: #f8fafc; padding: 15px; border-radius: 16px; border: 1px solid #e2e8f0;">
+                    <p style="margin:0; font-size: 22px;">💨</p>
+                    <small style="color: #64748b; font-weight: 600; display: block; margin-top: 5px;">Wind</small>
+                    <p style="margin: 5px 0 0 0; font-weight: 800; font-size: 18px; color: #0f172a;" id="wind-display">12 km/h</p>
+                </div>
+
+            </div>
+
+            <div style="margin-top:25px; padding:18px; border-radius:16px; background:linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1px solid #bbf7d0; text-align: left;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                    <strong style="color: #166534; font-size: 15px;">
+                        <i class="fas fa-robot" style="color: #22c55e;"></i> AI Farming Advice
+                    </strong>
+                </div>
+                <p id="advice-display" style="margin:0; font-size: 14px; color: #14532d; line-height: 1.5; font-weight: 500;">Loading advice...</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% comment %} #market place feauture {% endcomment %}
+<section id="marketplace" class="features" style="background: #f9f9f9; padding: 60px 0;">
+    <div class="container">
+        <div class="section-header" data-aos="fade-up">
+            <h2 class="section-title">Available Crops</h2>
+            <p class="section-subtitle">Real produce from our PostgreSQL database</p>
+            
+            <div style="max-width: 500px; margin: 30px auto; display: flex; gap: 10px;">
+                <form method="GET" action="{% url 'home' %}#marketplace" style="width: 100%; display: flex; gap: 10px;">
+                    <input type="text" name="search" placeholder="Search crops (e.g. Wheat, Rice)..." 
+                           value="{{ request.GET.search }}"
+                           style="flex: 1; padding: 12px 20px; border-radius: 30px; border: 1px solid #ddd; outline: none; font-family: 'Inter', sans-serif;">
+                    <button type="submit" class="btn btn-primary" style="border-radius: 30px; padding: 10px 25px;">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="features-grid">
+            {% for crop in crops %}
+                <div class="feature-card" data-aos="fade-up">
+                    <div class="feature-icon" style="height: 200px; width: 100%; overflow: hidden; border-radius: 12px; margin-bottom: 20px; background: white; padding: 0;">
+                        {% if crop.image %}
+                            <img src="{{ crop.image.url }}" alt="{{ crop.name }}" 
+                                 style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                        {% else %}
+                            <div style="height: 100%; display: flex; align-items: center; justify-content: center; background: #eee;">
+                                <i class="fas fa-leaf" style="font-size: 3rem; color: #2d5a27;"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <h3>{{ crop.name }}</h3>
+                    <p><strong>Variety:</strong> {{ crop.variety }}</p>
+                    <p style="color: #2d5a27; font-size: 1.4rem; font-weight: 800; margin: 10px 0;">₹{{ crop.price }} / Qtl</p>
+                    
+                    <div style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">
+                        <i class="fas fa-user-circle"></i> Farmer: {{ crop.farmer.username }}
+                    </div>
+
+                   {% if user.is_authenticated and user.userprofile.role == "buyer" %}
+<form method="POST" action="{% url 'send_offer' crop.id %}">
+    {% csrf_token %}
+    
+    <input type="number" 
+           name="price" 
+           placeholder="Enter your offer price"
+           style="padding:10px; width:100%; margin-bottom:10px; border-radius:8px; border:1px solid #ccc;" 
+           required>
+
+    <button class="btn btn-primary" style="width: 100%;">
+        Send Offer
+    </button>
+</form>
+{% endif %}
+                </div>
+            {% empty %}
+                <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+                    <p>No crops matching your search found.</p>
+                    <a href="{% url 'home' %}">Show all crops</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+
+
+
+
+        <section id="features" class="features">
+            <div class="container">
+                <div class="section-header" data-aos="fade-up">
+                    <h2 class="section-title" data-translate="features.title">Why Choose AgriContract?</h2>
+                    <p class="section-subtitle" data-translate="features.subtitle">Revolutionizing agriculture through technology and trust</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card" data-aos="fade-up" data-aos-delay="100" onclick="showDemo()">
+                        <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                        <h3 data-translate="features.secure.title">Secure Contracts</h3>
+                        <p data-translate="features.secure.description">Legal binding contracts with guaranteed payments and delivery terms protected by blockchain technology</p>
+                        <a href="#" class="feature-link"><span data-translate="features.learn_more">Learn More</span> <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="feature-card" data-aos="fade-up" data-aos-delay="200" onclick="showDemo()">
+                        <div class="feature-icon"><i class="fas fa-users"></i></div>
+                        <h3 data-translate="features.direct.title">Direct Connection</h3>
+                        <p data-translate="features.direct.description">No middlemen - farmers connect directly with buyers for better prices and transparent dealings</p>
+                        <a href="#" class="feature-link"><span data-translate="features.learn_more">Learn More</span> <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="feature-card" data-aos="fade-up" data-aos-delay="300" onclick="showMarketAnalytics()">
+                        <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                        <h3 data-translate="features.insights.title">Market Insights</h3>
+                        <p data-translate="features.insights.description">Real-time crop prices and market trends powered by AI to make informed decisions</p>
+                        <a href="#" class="feature-link"><span data-translate="features.learn_more">Learn More</span> <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="feature-card" data-aos="fade-up" data-aos-delay="400" onclick="showVideoCall()">
+                        <div class="feature-icon"><i class="fas fa-video"></i></div>
+                        <h3 data-translate="features.communication.title">Video Negotiation</h3>
+                        <p data-translate="features.communication.description">Built-in video calling and chat for real-time price negotiation and crop inspection</p>
+                        <a href="#" class="feature-link"><span data-translate="features.learn_more">Learn More</span> <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="feature-card" data-aos="fade-up" data-aos-delay="500" onclick="showCropDiseaseDetector()">
+                        <div class="feature-icon"><i class="fas fa-microscope"></i></div>
+                        <h3 data-translate="features.disease.title">Disease Detection</h3>
+                        <p data-translate="features.disease.description">AI-powered crop disease detection by simply scanning crop images with your phone</p>
+                        <a href="#" class="feature-link"><span data-translate="features.learn_more">Learn More</span> <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="feature-card" data-aos="fade-up" data-aos-delay="600" onclick="showDemo()">
+                        <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+                        <h3 data-translate="features.mobile.title">Mobile First</h3>
+                        <p data-translate="features.mobile.description">Easy-to-use mobile interface designed specifically for farmers with simple controls</p>
+                        <a href="#" class="feature-link"><span data-translate="features.learn_more">Learn More</span> <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="how-it-works" class="how-it-works">
+            <div class="container">
+                <div class="section-header" data-aos="fade-up">
+                    <h2 class="section-title" data-translate="how_it_works.title">How It Works</h2>
+                    <p class="section-subtitle" data-translate="how_it_works.subtitle">Simple steps to transform your farming business</p>
+                </div>
+                <div class="process-container">
+                    <div class="process-timeline"></div>
+                    <div class="process-grid">
+                        <div class="process-section farmer-process" data-aos="fade-right">
+                            <h3 class="process-title"><i class="fas fa-seedling"></i> <span data-translate="how_it_works.farmers.title">For Farmers</span></h3>
+                            <div class="process-steps">
+                                <div class="process-step">
+                                    <div class="step-number">1</div>
+                                    <div class="step-content">
+                                        <h4 data-translate="how_it_works.farmers.step1.title">Register & List Crops</h4>
+                                        <p data-translate="how_it_works.farmers.step1.description">Create your profile and list available crops with detailed specifications and images</p>
+                                        <div class="step-features">
+                                            <span><i class="fas fa-check"></i> <span data-translate="how_it_works.farmers.step1.feature1">Easy registration</span></span>
+                                            <span><i class="fas fa-check"></i> <span data-translate="how_it_works.farmers.step1.feature2">Photo upload</span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="process-step">
+                                    <div class="step-number">2</div>
+                                    <div class="step-content">
+                                        <h4 data-translate="how_it_works.farmers.step2.title">Negotiate via Video Call</h4>
+                                        <p data-translate="how_it_works.farmers.step2.description">Receive offers and negotiate prices through video calls with verified buyers</p>
+                                        <div class="step-features">
+                                            <span><i class="fas fa-check"></i> <span data-translate="how_it_works.farmers.step2.feature1">Video negotiation</span></span>
+                                            <span><i class="fas fa-check"></i> <span data-translate="how_it_works.farmers.step2.feature2">Real-time chat</span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="process-step">
+                                    <div class="step-number">3</div>
+                                    <div class="step-content">
+                                        <h4 data-translate="how_it_works.farmers.step3.title">Secure Contract & Payment</h4>
+                                        <p data-translate="how_it_works.farmers.step3.description">Sign digital contracts and receive guaranteed payments through escrow service</p>
+                                        <div class="step-features">
+                                            <span><i class="fas fa-check"></i> <span data-translate="how_it_works.farmers.step3.feature1">Escrow protection</span></span>
+                                            <span><i class="fas fa-check"></i> <span data-translate="how_it_works.farmers.step3.feature2">Multiple payment methods</span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="process-section buyer-process" data-aos="fade-left">
+                            <h3 class="process-title"><i class="fas fa-shopping-cart"></i> <span data-translate="how_it_works.buyers.title">For Buyers</span></h3>
+                            <div class="process-steps">
+                                <div class="process-step">
+                                    <div class="step-number">1</div>
+                                    <div class="step-content">
+                                        <h4 data-translate="how_it_works.buyers.step1.title">Browse Quality Crops</h4>
+                                        <p data-translate="how_it_works.buyers.step1.description">Search and filter crops with detailed photos and quality certifications</p>
+                                        <div class="step-features">
+                                            <span><i class="fas fa-check"></i> <span data-translate="how_it_works.buyers.step1.feature1">Advanced filters</span></span>
+                                            <span><i class="fas fa-check"></i> <span data-translate="how_it_works.buyers.step1.feature2">Quality verification</span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="process-step">
+                                    <div class="step-number">2</div>
+                                    <div class="step-content">
+                                        <h4 data-translate="how_it_works.buyers.step2.title">Video Inspection & Negotiation</h4>
+                                        <p data-translate="how_it_works.buyers.step2.description">Inspect crops via video call and negotiate terms directly with farmers</p>
+                                        <div class="step-features">
+                                            <span><i class="fas fa-check"></i> <span data-translate="how_it_works.buyers.step2.feature1">Live crop inspection</span></span>
+                                            <span><i class="fas fa-check"></i> <span data-translate="how_it_works.buyers.step2.feature2">Price negotiation</span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="process-step">
+                                    <div class="step-number">3</div>
+                                    <div class="step-content">
+                                        <h4 data-translate="how_it_works.buyers.step3.title">Secure Transaction</h4>
+                                        <p data-translate="how_it_works.buyers.step3.description">Complete secure payments with delivery tracking and quality guarantee</p>
+                                        <div class="step-features">
+                                            <span><i class="fas fa-check"></i> <span data-translate="how_it_works.buyers.step3.feature1">Delivery tracking</span></span>
+                                            <span><i class="fas fa-check"></i> <span data-translate="how_it_works.buyers.step3.feature2">Quality guarantee</span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="educational-resources">
+            <div class="container">
+                <div class="section-header" data-aos="fade-up">
+                    <h2 class="section-title" data-translate="education.title">Educational Resources</h2>
+                    <p class="section-subtitle" data-translate="education.subtitle">Learn best practices and stay updated with market trends</p>
+                </div>
+                <div class="resources-grid">
+                    <div class="resource-card" data-aos="fade-up" data-aos-delay="100" onclick="showTrainingModules()">
+                        <div class="resource-icon"><i class="fas fa-graduation-cap"></i></div>
+                        <h3 data-translate="education.training.title">Training Modules</h3>
+                        <p data-translate="education.training.description">Comprehensive training on contract farming best practices</p>
+                    </div>
+                    <div class="resource-card" data-aos="fade-up" data-aos-delay="200" onclick="showMarketTrends()">
+                        <div class="resource-icon"><i class="fas fa-chart-bar"></i></div>
+                        <h3 data-translate="education.trends.title">Market Trends</h3>
+                        <p data-translate="education.trends.description">Real-time market analysis and price predictions</p>
+                    </div>
+                    <div class="resource-card" data-aos="fade-up" data-aos-delay="300" onclick="showAgriculturalAdvice()">
+                        <div class="resource-icon"><i class="fas fa-leaf"></i></div>
+                        <h3 data-translate="education.advice.title">Agricultural Advice</h3>
+                        <p data-translate="education.advice.description">Expert advice on crop management and farming techniques</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="testimonials">
+            <div class="container">
+                <div class="section-header" data-aos="fade-up">
+                    <h2 class="section-title" data-translate="testimonials.title">What Our Users Say</h2>
+                    <p class="section-subtitle" data-translate="testimonials.subtitle">Real stories from real farmers and buyers</p>
+                </div>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="testimonial-content">
+                            <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                            <p data-translate="testimonials.farmer1.quote">"AgriContract has revolutionized my farming business. The video negotiation feature helped me get 30% better prices."</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">G</div>
+                            <div class="author-info">
+                                <h4>Govind Tayal</h4>
+                                <span data-translate="testimonials.farmer1.location">Wheat Farmer, Punjab</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card" data-aos="fade-up" data-aos-delay="200">
+                        <div class="testimonial-content">
+                            <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                            <p data-translate="testimonials.buyer1.quote">"The disease detection feature saved us from buying infected crops. The platform is incredibly reliable."</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">A</div>
+                            <div class="author-info">
+                                <h4>ABC Food Industries</h4>
+                                <span data-translate="testimonials.buyer1.location">Food Processor, Delhi</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card" data-aos="fade-up" data-aos-delay="300">
+                        <div class="testimonial-content">
+                            <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                            <p data-translate="testimonials.farmer2.quote">"The multilingual support and easy interface made it simple for me to use. Great platform!"</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">H</div>
+                            <div class="author-info">
+                                <h4>Harshit Kumar Pal</h4>
+                                <span data-translate="testimonials.farmer2.location">Rice Farmer, Haryana</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta">
+            <div class="container">
+                <div class="cta-content" data-aos="fade-up">
+                    <h2 data-translate="cta.title">Ready to Transform Your Farming Business?</h2>
+                    <p data-translate="cta.subtitle">Join thousands of farmers and buyers already using AgriContract</p>
+                    <div class="cta-buttons">
+                        <button class="btn btn-secondary btn-lg" onclick="showRegister()">
+                            <i class="fas fa-rocket"></i>
+                            <span data-translate="cta.start_journey">Start Your Journey Today</span>
+                        </button>
+                        <button class="btn btn-outline-white btn-lg" onclick="showDemo()">
+                            <i class="fas fa-play"></i>
+                            <span data-translate="cta.watch_demo">Watch Demo</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer id="about" class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <div class="footer-brand">
+                            <i class="fas fa-seedling"></i>
+                            <span data-translate="brand">AgriContract</span>
+                        </div>
+                        <p data-translate="footer.description">Connecting farmers and buyers through smart contract farming solutions. Building a sustainable future for agriculture.</p>
+                        <div class="social-links">
+                            <a href="#" class="social-link" onclick="showDemo()"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="social-link" onclick="showDemo()"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="social-link" onclick="showDemo()"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="social-link" onclick="showDemo()"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-section">
+                        <h4 data-translate="footer.platform.title">Platform</h4>
+                        <ul>
+                            <li><a href="#features" onclick="scrollToSection('features')" data-translate="footer.platform.features">Features</a></li>
+                            <li><a href="#" onclick="showPricing()" data-translate="footer.platform.pricing">Pricing</a></li>
+                            <li><a href="#" onclick="showSupport()" data-translate="footer.platform.support">Support</a></li>
+                            <li><a href="#" onclick="showAPI()" data-translate="footer.platform.api">API</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4 data-translate="footer.company.title">Company</h4>
+                        <ul>
+                            <li><a href="#about" onclick="scrollToSection('about')" data-translate="footer.company.about">About Us</a></li>
+                            <li><a href="#" onclick="showContact()" data-translate="footer.company.contact">Contact</a></li>
+                            <li><a href="#" onclick="showCareers()" data-translate="footer.company.careers">Careers</a></li>
+                            <li><a href="#" onclick="showBlog()" data-translate="footer.company.blog">Blog</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4 data-translate="footer.legal.title">Legal</h4>
+                        <ul>
+                            <li><a href="#" onclick="showPrivacy()" data-translate="footer.legal.privacy">Privacy Policy</a></li>
+                            <li><a href="#" onclick="showTerms()" data-translate="footer.legal.terms">Terms of Service</a></li>
+                            <li><a href="#" onclick="showCookies()" data-translate="footer.legal.cookies">Cookie Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p data-translate="footer.copyright">© 2024 AgriContract. All rights reserved. Made with ❤️ for farmers.</p>
+                    <div class="footer-credits">
+                        <p data-translate="footer.credits">Developed by: Govind Tayal, Harshit Kumar Pal, Jeshika Agrahari, Jatin Prajapat</p>
+                        <p data-translate="footer.institution">Greater Noida Institute of Technology</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <div id="login-modal" class="modal">
+        <div class="modal-overlay" onclick="closeModal('login-modal')"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-sign-in-alt"></i> <span data-translate="auth.welcome_back">Welcome Back</span></h2>
+                <button class="modal-close" onclick="closeModal('login-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+              <form id="login-form" method="POST" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="login-email"><i class="fas fa-envelope"></i> <span data-translate="auth.email">Email</span></label>
+                        <input type="text" name="username" id="login-email" required data-translate-placeholder="auth.email_placeholder">
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password"><i class="fas fa-lock"></i> <span data-translate="auth.password">Password</span></label>
+                        <div class="password-input">
+                            <input type="password" name="password" id="login-password" required data-translate-placeholder="auth.password_placeholder">
+                            <button type="button" class="password-toggle" onclick="togglePassword('login-password')"><i class="fas fa-eye"></i></button>
+                        </div>
+                    </div>
+                    <div class="form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="remember-me">
+                            <div class="checkmark"></div>
+                            <span data-translate="auth.remember_me">Remember me</span>
+                        </label>
+                        <a href="#" class="forgot-password" data-translate="auth.forgot_password">Forgot Password?</a>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-sign-in-alt"></i> <span data-translate="auth.sign_in">Sign In</span></button>
+                </form>
+                <div class="demo-credentials">
+                    <p><strong data-translate="auth.demo_credentials">Demo Credentials:</strong></p>
+                    <div class="demo-creds">
+                        <div class="demo-cred"><span><strong data-translate="auth.farmer">Farmer:</strong> farmer@demo.com / password123</span><button class="btn-copy" onclick="copyCredentials('farmer@demo.com', 'password123')"><i class="fas fa-copy"></i></button></div>
+                        <div class="demo-cred"><span><strong data-translate="auth.buyer">Buyer:</strong> buyer@demo.com / password123</span><button class="btn-copy" onclick="copyCredentials('buyer@demo.com', 'password123')"><i class="fas fa-copy"></i></button></div>
+                    </div>
+                </div>
+                <p class="text-center"><span data-translate="auth.no_account">Don't have an account?</span> <a href="#" onclick="closeModal('login-modal'); showRegister()" data-translate="auth.sign_up">Sign up</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="register-modal" class="modal modal-lg">
+    <div class="modal-overlay" onclick="closeModal('register-modal')"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-user-plus"></i> <span data-translate="auth.create_account">Create Account</span></h2>
+            <button class="modal-close" onclick="closeModal('register-modal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="register-form" method="POST" action="{% url 'register' %}">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> <span data-translate="auth.full_name">Full Name</span></label>
+                        <input type="text" name="name" required data-translate-placeholder="auth.name_placeholder">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> <span data-translate="auth.email">Email</span></label>
+                        <input type="email" name="username" required data-translate-placeholder="auth.email_placeholder">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-briefcase"></i> <span data-translate="auth.role">I am a</span></label>
+                    <select name="role" id="register-role" required>
+                        <option value="" data-translate="auth.select_role">Select your role</option>
+                        <option value="farmer" data-translate="auth.farmer_option">🌾 Farmer - I want to sell crops</option>
+                        <option value="buyer" data-translate="auth.buyer_option">🛒 Buyer - I want to buy crops</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> <span data-translate="auth.password">Password</span></label>
+                        <input type="password" name="password" id="register-password" required data-translate-placeholder="auth.create_password">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> <span data-translate="auth.confirm_password">Confirm Password</span></label>
+                        <input type="password" name="confirm_password" required data-translate-placeholder="auth.confirm_password_placeholder">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-phone"></i> <span data-translate="auth.phone">Phone Number</span></label>
+                    <input type="tel" name="phone" required data-translate-placeholder="auth.phone_placeholder">
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-map-marker-alt"></i> <span data-translate="auth.address">Address</span></label>
+                    <textarea name="address" required data-translate-placeholder="auth.address_placeholder"></textarea>
+                </div>
+
+                <div class="form-group" style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+                    <input type="checkbox" required id="terms" style="width: auto; margin: 0;">
+                    <label for="terms" style="font-size: 0.85rem; color: #666; cursor: pointer;">
+                        I agree to the Terms of Service & Privacy Policy
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">
+                    <i class="fas fa-user-plus"></i> <span data-translate="auth.sign_up">Create Account</span>
+                </button>
+            </form>
+            <p class="text-center"><span data-translate="auth.have_account">Already have an account?</span> <a href="#" onclick="closeModal('register-modal'); showLogin()" data-translate="auth.sign_in">Sign in</a></p>
+        </div>
+    </div>
+</div>
+
+    <div id="disease-detection-modal" class="modal modal-xl">
+        <div class="modal-overlay" onclick="closeModal('disease-detection-modal')"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-microscope"></i> <span data-translate="disease.title">Crop Disease Detection</span></h2>
+                <button class="modal-close" onclick="closeModal('disease-detection-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="disease-detection-container">
+                    <div class="upload-section">
+                        <div id="upload-area" class="upload-area" onclick="triggerFileUpload()">
+                            <i class="fas fa-camera"></i>
+                            <h3 data-translate="disease.upload_title">Upload Crop Image</h3>
+                            <p data-translate="disease.upload_description">Take a photo or upload an image of your crop for AI-powered detection</p>
+                            <button class="btn btn-primary"><i class="fas fa-upload"></i> <span data-translate="disease.choose_image">Choose Image</span></button>
+                        </div>
+                        <input type="file" id="crop-image-input" accept="image/*" style="display: none;">
+                    </div>
+                    <div id="detection-results" class="detection-results" style="display: none;">
+                        <h3 data-translate="disease.results_title">Detection Results</h3>
+                        <div id="result-content"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="video-call-modal" class="modal modal-xl" >
+        <div class="modal-overlay" onclick="closeModal('video-call-modal')"></div>
+        <div class="modal-content" style="background: #18b82d;">
+            <div class="modal-header" style="background: #18b82d;">
+                <h2><i class="fas fa-video"></i> <span data-translate="video.title">Video Negotiation</span></h2>
+                <button class="modal-close" onclick="closeModal('video-call-modal')">&times;</button>
+            </div>
+            <div class="modal-body" style="background: #18b82d;">
+                <div class="video-call-container">
+                    <div class="video-section">
+                        <div class="main-video"><video id="remote-video" autoplay></video><div class="video-overlay" data-translate="video.remote_user">Remote User</div></div>
+                        <div class="local-video"><video id="local-video" autoplay muted></video><div class="video-overlay" data-translate="video.you">You</div></div>
+                        <div class="video-controls">
+                            <button id="mute-btn" class="control-btn" onclick="toggleMute()"><i class="fas fa-microphone"></i></button>
+                            <button id="video-btn" class="control-btn" onclick="toggleVideo()"><i class="fas fa-video"></i></button>
+                            <button class="control-btn" onclick="shareScreen()"><i class="fas fa-desktop"></i></button>
+                            <button class="control-btn end-call" onclick="endCall()"><i class="fas fa-phone-slash"></i></button>
+                        </div>
+                    </div>
+                    <div class="chat-section">
+                        <div id="chat-messages" class="chat-messages"></div>
+                        <div class="chat-input"><input type="text" id="chat-input" data-translate-placeholder="video.chat_placeholder"><button onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="market-analytics-modal" class="modal modal-xl">
+        <div class="modal-overlay" onclick="closeModal('market-analytics-modal')"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-chart-line"></i> <span data-translate="analytics.title">Market Analytics</span></h2>
+                <button class="modal-close" onclick="closeModal('market-analytics-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="analytics-dashboard">
+                    <div class="analytics-filters">
+                        <select><option data-translate="analytics.all_crops">All Crops</option><option data-translate="analytics.wheat">Wheat</option><option data-translate="analytics.rice">Rice</option></select>
+                        <select><option data-translate="analytics.all_regions">All Regions</option><option data-translate="analytics.punjab">Punjab</option><option data-translate="analytics.haryana">Haryana</option></select>
+                        <select><option data-translate="analytics.week">Last Week</option><option data-translate="analytics.month">Last Month</option></select>
+                    </div>
+                    <div class="analytics-charts">
+                        <div class="chart-container"><h3 data-translate="analytics.price_trends">Price Trends</h3><div class="chart-placeholder"><canvas id="price-chart" width="400" height="300"></canvas></div></div>
+                        <div class="chart-container"><h3 data-translate="analytics.demand_supply">Demand vs Supply</h3><div class="chart-placeholder"><canvas id="demand-supply-chart" width="400" height="300"></canvas></div></div>
+                    </div>
+                    <div class="market-insights">
+                        <h3 data-translate="analytics.insights">Market Insights</h3>
+                        <div class="insights-grid">
+                            <div class="insight-card"><i class="fas fa-arrow-up text-success"></i><div><h4 data-translate="analytics.wheat_price_up">Wheat Prices Rising</h4><p data-translate="analytics.wheat_insight">Wheat prices increased by 8% this week</p></div></div>
+                            <div class="insight-card"><i class="fas fa-exclamation-triangle text-warning"></i><div><h4 data-translate="analytics.rice_supply_low">Rice Supply Low</h4><p data-translate="analytics.rice_insight">Rice supply is 15% below average</p></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="toast-container"></div>
+    <script src="{% static 'script.js' %}"></script>
+</body>
+</html>

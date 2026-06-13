@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Potato Disease Detector</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            padding: 40px;
+            background-color: #f4f7f6;
+        }
+
+        .box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 400px;
+            margin: auto;
+            box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+        }
+
+        button {
+            padding: 10px 20px;
+            background: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        input {
+            margin: 15px 0;
+        }
+
+        #result {
+            margin-top: 20px;
+        }
+
+        .result-box {
+            background: #ecfdf5;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid green;
+        }
+
+        .loading {
+            color: orange;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+    <h2>🥔 Potato Disease Detector</h2>
+
+    <form id="uploadForm" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="crop_image" required>
+        <br>
+        <button type="submit">Predict</button>
+    </form>
+
+    <div id="result"></div>
+</div>
+
+<script>
+document.getElementById("uploadForm").onsubmit = async function(e) {
+    e.preventDefault();
+
+    let resultDiv = document.getElementById("result");
+
+    // 🔥 Show loading
+    resultDiv.innerHTML = "<p class='loading'>⏳ Processing image...</p>";
+
+    let formData = new FormData(this);
+
+    let response = await fetch("/disease-detector/", {
+        method: "POST",
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    });
+
+    let data = await response.json();
+
+    // 🎯 Show result
+    resultDiv.innerHTML =
+        "<div class='result-box'>" +
+        "<h3>🌱 " + data.disease + "</h3>" +
+        "<p><b>Status:</b> " + data.status + "</p>" +
+        "<p><b>Confidence:</b> " + data.confidence + "</p>" +
+        "<p><b>Advice:</b> " + data.advice + "</p>" +
+        "</div>";
+};
+</script>
+
+</body>
+</html>

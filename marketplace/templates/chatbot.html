@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jarvis AI</title>
+</head>
+
+<body style="background:#0f172a; color:white; font-family:Arial;">
+
+<h2 style="text-align:center;">🤖 Jarvis Farming Assistant</h2>
+
+<div id="chat" style="width:400px; margin:auto; height:400px; overflow-y:auto; border:1px solid gray; padding:10px;"></div>
+
+<div style="text-align:center; margin-top:10px;">
+    <input id="msg" placeholder="Ask something..." style="width:250px; padding:10px;">
+    <button onclick="sendMsg()">Send</button>
+    <button onclick="startVoice()">🎤</button>
+</div>
+
+<script>
+
+// Add message to UI
+function addMessage(text, sender) {
+    let chat = document.getElementById("chat");
+    let div = document.createElement("div");
+
+    div.innerHTML = "<b>" + sender + ":</b> " + text;
+    div.style.margin = "10px";
+
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+}
+
+// Send message to Django
+async function sendMsg() {
+    let msg = document.getElementById("msg").value;
+
+    addMessage(msg, "You");
+
+    let res = await fetch("/ai-chatbot/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: "message=" + msg
+    });
+
+    let data = await res.json();
+
+    addMessage(data.reply, "Jarvis");
+    speak(data.reply);
+}
+
+// 🎤 Voice input
+function startVoice() {
+    let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+
+    recognition.onresult = function(event) {
+        let text = event.results[0][0].transcript;
+        document.getElementById("msg").value = text;
+        sendMsg();
+    };
+
+    recognition.start();
+}
+
+// 🔊 Voice output
+function speak(text) {
+    let speech = new SpeechSynthesisUtterance(text);
+    speech.lang = "en-IN";
+    window.speechSynthesis.speak(speech);
+}
+
+</script>
+
+</body>
+</html>

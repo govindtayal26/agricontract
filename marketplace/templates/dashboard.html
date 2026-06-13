@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Farmer Dashboard</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f4f6f9;
+            padding: 30px;
+        }
+
+        h2 {
+            color: #2d5a27;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f0f0f0;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .accepted {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 2px;
+        }
+
+        .btn-accept {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-reject {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-chat {
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+        }
+
+        .btn-chat:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>🌾 Farmer Dashboard</h2>
+
+<!-- ========================= -->
+<!-- 🌱 MY CROPS -->
+<!-- ========================= -->
+<div class="card">
+    <h3>My Crops</h3>
+
+    <table>
+        <tr>
+            <th>Crop</th>
+            <th>Price</th>
+        </tr>
+
+        {% for crop in my_crops %}
+        <tr>
+            <td>{{ crop.name }}</td>
+            <td>₹{{ crop.price }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="2">No crops added</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+
+<!-- ========================= -->
+<!-- 🤝 OFFERS -->
+<!-- ========================= -->
+<div class="card">
+    <h3>Incoming Offers</h3>
+
+    <table>
+        <tr>
+            <th>Crop</th>
+            <th>Buyer</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+
+        {% for contract in contracts %}
+        <tr>
+            <td>{{ contract.crop.name }}</td>
+            <td>{{ contract.buyer.username }}</td>
+            <td>₹{{ contract.offered_price }}</td>
+
+            <!-- STATUS -->
+            <td>
+                {% if contract.status == "pending" %}
+                    <span class="badge pending">Pending</span>
+                {% elif contract.status == "accepted" %}
+                    <span class="badge accepted">Accepted</span>
+                {% else %}
+                    <span class="badge rejected">Rejected</span>
+                {% endif %}
+            </td>
+
+            <!-- ACTIONS -->
+            <td>
+
+                {% if contract.status == "pending" %}
+
+                <!-- ACCEPT -->
+                <form method="POST" action="{% url 'update_contract' contract.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="accept">
+                    <button type="submit" class="btn btn-accept">Accept</button>
+                </form>
+
+                <!-- REJECT -->
+                <form method="POST" action="{% url 'update_contract' contract.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="reject">
+                    <button type="submit" class="btn btn-reject">Reject</button>
+                </form>
+
+                {% endif %}
+
+                <!-- CHAT BUTTON (CORRECT PLACE) -->
+                <a href="{% url 'chat' contract.id %}" class="btn-chat">Chat</a>
+
+            </td>
+        </tr>
+
+        {% empty %}
+        <tr>
+            <td colspan="5">No offers yet</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+</body>
+</html>
